@@ -26,12 +26,23 @@ cat << EOF | cat > /root/storj.sh
 docker stop storagenode &> /dev/null
 docker rm storagenode &> /dev/null
 docker pull storjlabs/storagenode:latest
-docker run -d --restart unless-stopped -p 28967:28967/udp -p 28967:28967/tcp -p 14002:14002 -e WALLET="${WALLET_ADDRESS}" -e EMAIL="${EMAIL_ADDRESS}" -e ADDRESS="${IP_ADDRESS_OR_DNS_NAME}:28967" -e BANDWIDTH="256TB" -e STORAGE="${HOW_MUCH_STORAGE_TO_SHARE_IN_GB}" --mount type=bind,source="/root/.local/share/storj/identity/storagenode/",destination=/app/identity --mount type=bind,source="${STORAGE_PATH}",destination=/app/config --name storagenode storjlabs/storagenode:latest
+docker run -d --restart unless-stopped --stop-timeout 300 \
+-p 28967:28967/udp \
+-p 28967:28967/tcp \
+-p 14002:14002 \
+-e WALLET="${WALLET_ADDRESS}" \
+-e EMAIL="${EMAIL_ADDRESS}" \
+-e ADDRESS="${IP_ADDRESS_OR_DNS_NAME}:28967" \
+-e BANDWIDTH="256TB" \
+-e STORAGE="${HOW_MUCH_STORAGE_TO_SHARE_IN_GB}" \
+--mount type=bind,source="/root/.local/share/storj/identity/storagenode/",destination=/app/identity \
+--mount type=bind,source="${STORAGE_PATH}",destination=/app/config \
+--name storagenode storjlabs/storagenode:latest
 
 docker stop watchtower &> /dev/null
 docker rm watchtower &> /dev/null
 docker pull storjlabs/watchtower
-docker run -d --restart=always --name watchtower -v /var/run/docker.sock:/var/run/docker.sock storjlabs/watchtower storagenode watchtower --stop-timeout 300s --interval 21600
+docker run -d --restart=always --name watchtower -v /var/run/docker.sock:/var/run/docker.sock storjlabs/watchtower storagenode watchtower --stop-timeout 300s
 EOF
 
 chmod +x /root/storj.sh
