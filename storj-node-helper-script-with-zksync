@@ -31,7 +31,7 @@ docker run -d --restart unless-stopped -p 28967:28967/udp -p 28967:28967/tcp -p 
 docker stop watchtower &> /dev/null
 docker rm watchtower &> /dev/null
 docker pull storjlabs/watchtower
-docker run -d --restart=always --name watchtower -v /var/run/docker.sock:/var/run/docker.sock storjlabs/watchtower storagenode watchtower --stop-timeout 300s --interval 21600
+docker run -d --restart=always --name watchtower -v /var/run/docker.sock:/var/run/docker.sock storjlabs/watchtower storagenode watchtower --stop-timeout 300s
 EOF
 
 chmod +x /root/storj.sh
